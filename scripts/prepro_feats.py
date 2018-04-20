@@ -44,9 +44,10 @@ preprocess = trn.Compose([
         trn.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
 
-
-from ImageCaptioning.pytorch.misc.resnet_utils import myResnet
-import ImageCaptioning.pytorch.misc.resnet as resnet
+import sys
+sys.path.append('../')
+from misc.resnet_utils import myResnet
+import misc.resnet as resnet
 
 
 def main(params):
