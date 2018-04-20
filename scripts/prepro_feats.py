@@ -45,7 +45,7 @@ preprocess = trn.Compose([
 ])
 
 import sys
-sys.path.append('../misc')
+sys.path.append('../')
 from misc.resnet_utils import myResnet
 import misc.resnet as resnet
 
