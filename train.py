@@ -8,6 +8,7 @@ from torch.autograd import Variable
 import torch.optim as optim
 
 import numpy as np
+import csv
 
 import time
 import os
@@ -29,7 +30,7 @@ def add_summary_value(writer, key, value, iteration):
     summary = tf.Summary(value=[tf.Summary.Value(tag=key, simple_value=value)])
     writer.add_summary(summary, iteration)
 
-def train(opt):
+def train(opt, lossWriter):
     opt.use_att = utils.if_use_att(opt.caption_model)
     loader = DataLoader(opt)
     opt.vocab_size = loader.vocab_size
@@ -119,7 +120,7 @@ def train(opt):
         end = time.time()
         print("iter {} (epoch {}), train_loss = {:.3f}, time/batch = {:.3f}" \
             .format(iteration, epoch, train_loss, end - start))
-
+        lossWriter.writerow([epoch, iteration, train_loss])
         # Update the iteration and epoch
         iteration += 1
         if data['bounds']['wrapped']:
@@ -201,4 +202,12 @@ def train(opt):
             break
 
 opt = opts.parse_opt()
-train(opt)
+
+#Prepare Loss File
+LossFilename = './LossFile/' + opt.caption_model + '.csv'
+LossFile = open(LossFilename, 'w')
+LossCursor = csv.writer(LossFile)
+
+train(opt, LossCursor)
+
+LossFile.close()
