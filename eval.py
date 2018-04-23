@@ -7,7 +7,7 @@ import numpy as np
 
 import time
 import os
-from six.moves import cPickle
+from six.moves import pickle
 
 import opts
 import models
