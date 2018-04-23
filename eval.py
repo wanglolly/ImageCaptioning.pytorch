@@ -17,6 +17,8 @@ import eval_utils
 import argparse
 import misc.utils as utils
 import torch
+import matplotlib
+matplotlib.use('Agg')
 
 
 # Input arguments and options
