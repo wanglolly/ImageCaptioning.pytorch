@@ -18,6 +18,11 @@ import argparse
 import misc.utils as utils
 import torch
 
+#set utf-8 environment
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
 # Input arguments and options
 parser = argparse.ArgumentParser()
 # Input paths
