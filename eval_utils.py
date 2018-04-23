@@ -134,7 +134,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                     plt.imshow(oriimg)
                     plt.text(0, 1, '%s'%(words[t]), color='black', backgroundcolor='white', fontsize = 8)
                     plt.imshow(oriimg)
-                    alp_curr = alphas.cpu().numpy()[t, :].reshape(14, 14)
+                    alp_curr = alphas.cpu().data.numpy()[t, :].reshape(14, 14)
                     alp_img = skimage.transform.pyramid_expand(alp_curr, upscale = 16, sigma = 20)
                     plt.imshow(alp_img, alpha = 0.85)
                     plt.axis('off')
