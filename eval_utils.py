@@ -18,6 +18,7 @@ import misc.utils as utils
 import matplotlib.pyplot as plt
 from scipy import ndimage
 import skimage.transform
+matplotlib.use('Agg')
 
 def language_eval(dataset, preds, model_id, split):
     import sys
