@@ -124,6 +124,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                 os.system(cmd)
 
                 #plot attension image
+                matplotlib.use('Agg')
                 oriimg = ndimage.imread('vis/imgs/img' + str(len(predictions)) + '.jpg')
                 words = entry['caption'].split(" ")
                 img = plt.subplot(4, 5 , 1)
