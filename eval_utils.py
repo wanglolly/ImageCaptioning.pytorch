@@ -124,21 +124,21 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                 #plot attension image
                 oriimg = ndimage.imread('vis/imgs/img' + str(len(predictions)) + '.jpg')
                 words = entry['caption'].split(" ")
-                img = plt.subplot(4, 5 , 1)
-                img.imshow(oriimg)
-                img.axis('off')
+                plt.subplot(4, 5 , 1)
+                plt.imshow(oriimg)
+                plt.axis('off')
                 for t in range(len(words)):
                     if t > 18 :
                         break
-                    img.subplot(4, 5, t + 2)
-                    img.imshow(oriimg)
-                    img.text(0, 1, '%s'%(words[t]), color='black', backgroundcolor='white', fontsize = 8)
-                    img.imshow(oriimg)
+                    plt.subplot(4, 5, t + 2)
+                    plt.imshow(oriimg)
+                    plt.text(0, 1, '%s'%(words[t]), color='black', backgroundcolor='white', fontsize = 8)
+                    plt.imshow(oriimg)
                     alp_curr = alphas.data.numpy()[t, :].reshape(14, 14)
                     alp_img = skimage.transform.pyramid_expand(alp_curr, upscale = 16, sigma = 20)
-                    img.imshow(alp_img, alpha = 0.85)
-                    img.axis('off')
-                img.savefig('vis/attention.jpg')
+                    plt.imshow(alp_img, alpha = 0.85)
+                    plt.axis('off')
+                plt.savefig('vis/attention.jpg')
 
             if verbose:
                 print('image %s: %s' %(entry['image_id'], entry['caption']))
