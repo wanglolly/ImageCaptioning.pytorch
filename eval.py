@@ -7,7 +7,7 @@ import numpy as np
 
 import time
 import os
-from six.moves import pickle
+from six.moves import cPickle
 
 import opts
 import models
@@ -74,8 +74,8 @@ parser.add_argument('--id', type=str, default='',
 opt = parser.parse_args()
 
 # Load infos
-with open(opt.infos_path) as f:
-    infos = pickle.load(f)
+with open(opt.infos_path, "rb") as f:
+    infos = cPickle.load(f)
 
 # override and collect parameters
 if len(opt.input_fc_dir) == 0:
