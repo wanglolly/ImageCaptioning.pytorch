@@ -15,10 +15,11 @@ import time
 import os
 import sys
 import misc.utils as utils
-import matplotlib.pyplot as plt
 from scipy import ndimage
 import skimage.transform
+import matplotlib
 matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 def language_eval(dataset, preds, model_id, split):
     import sys
