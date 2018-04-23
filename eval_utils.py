@@ -108,7 +108,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
         
         #set_trace()
         sents = utils.decode_sequence(loader.get_vocab(), seq) 
-        alphas = torch.transpose(torch.stack(alphas), (1, 0, 2))
+        alphas = torch.transpose(torch.stack(alphas), 1, 0, 2)
 
         for k, sent in enumerate(sents):
             entry = {'image_id': data['infos'][k]['id'], 'caption': sent}
