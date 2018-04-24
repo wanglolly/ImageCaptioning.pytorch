@@ -18,6 +18,7 @@ import misc.utils as utils
 import skimage.transform
 import matplotlib.pyplot as plt
 from PIL import Image
+import cv2
 
 def language_eval(dataset, preds, model_id, split):
     import sys
@@ -107,7 +108,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
         
         #set_trace()
         sents = utils.decode_sequence(loader.get_vocab(), seq) 
-        alps = torch.cat(alphas[0][1:], 0)
+        alps = alphas.view(7, 7).numpy()
 
         for k, sent in enumerate(sents):
             entry = {'image_id': data['infos'][k]['id'], 'caption': sent}
@@ -133,9 +134,10 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                     plt.subplot(4, 5, t + 2)
                     plt.text(0, 1, '%s'%(words[t]), color='black', backgroundcolor='white', fontsize = 8)
                     plt.imshow(oriimg)
-                    alp_curr = alps[t, :].view(14,14)
-                    alp_img = skimage.transform.pyramid_expand(alp_curr, upscale = 16, sigma = 20)
-                    plt.imshow(alp_img, alpha = 0.85)
+                    #alp_curr = alps[t, :].view(14,14)
+                    #alp_img = skimage.transform.pyramid_expand(alp_curr, upscale = 16, sigma = 20)
+                    alps = cv2.resize(alps, dsize=(224, 224), interpolation=cv2.INTER_CUBIC)
+                    plt.imshow(alps, alpha = 0.85)
                     plt.axis('off')
                 plt.savefig('vis/attention.jpg')
 
