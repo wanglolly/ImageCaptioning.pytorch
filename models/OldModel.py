@@ -225,8 +225,6 @@ class ShowAttendTellCore(nn.Module):
         att_res = torch.bmm(weight.unsqueeze(1), att_feats_).squeeze(1) # batch * att_feat_size
 
         output, state = self.rnn(torch.cat([xt, att_res], 1).unsqueeze(0), state)
-        print('model')
-        print(weight.size())
         return output.squeeze(0), state, weight
 
 class AllImgCore(nn.Module):
