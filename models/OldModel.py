@@ -221,10 +221,12 @@ class ShowAttendTellCore(nn.Module):
             dot = att_h + att                                   # batch * att_size
         
         weight = F.softmax(dot)
+        print('old model1 ' + weight.size())
         att_feats_ = att_feats.view(-1, att_size, self.att_feat_size) # batch * att_size * att_feat_size
         att_res = torch.bmm(weight.unsqueeze(1), att_feats_).squeeze(1) # batch * att_feat_size
 
         output, state = self.rnn(torch.cat([xt, att_res], 1).unsqueeze(0), state)
+        print('old model2 ' + weight.size())
         return output.squeeze(0), state, weight
 
 class AllImgCore(nn.Module):
