@@ -62,7 +62,7 @@ class AttModel(CaptionModel):
         state = self.init_hidden(batch_size)
 
         outputs = []
-
+        weights = []
         # embed fc and att feats
         fc_feats = self.fc_embed(fc_feats)
         _att_feats = self.att_embed(att_feats.view(-1, self.att_feat_size))
@@ -97,8 +97,9 @@ class AttModel(CaptionModel):
             output, state, weight = self.core(xt, fc_feats, att_feats, p_att_feats, state)
             output = F.log_softmax(self.logit(output))
             outputs.append(output)
+            weights.append(weight)
 
-        return torch.cat([_.unsqueeze(1) for _ in outputs], 1), weight
+        return torch.cat([_.unsqueeze(1) for _ in outputs], 1), weights
 
     def get_logprobs_state(self, it, tmp_fc_feats, tmp_att_feats, tmp_p_att_feats, state):
         # 'it' is Variable contraining a word index

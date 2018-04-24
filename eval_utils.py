@@ -91,8 +91,8 @@ def eval_split(model, crit, loader, eval_kwargs={}):
             tmp = [data['fc_feats'], data['att_feats'], data['labels'], data['masks']]
             tmp = [Variable(torch.from_numpy(_), volatile=True).cuda() for _ in tmp]
             fc_feats, att_feats, labels, masks = tmp
-            
             value, alphas = model(fc_feats, att_feats, labels)
+            print(alphas.size())
             loss = crit(value, labels[:,1:], masks[:,1:]).data[0]
             loss_sum = loss_sum + loss
             loss_evals = loss_evals + 1
@@ -108,7 +108,6 @@ def eval_split(model, crit, loader, eval_kwargs={}):
         
         #set_trace()
         sents = utils.decode_sequence(loader.get_vocab(), seq) 
-        alphas = alphas.view(50,-1,14).cpu().data.numpy().transpose(1,2,0)
 
         for k, sent in enumerate(sents):
             entry = {'image_id': data['infos'][k]['id'], 'caption': sent}
@@ -129,6 +128,9 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                 plt.subplot(4, 5, 1)
                 plt.imshow(oriimg)
                 plt.axis('off')
+                alpha = alphas[k,:,:]
+                print(alpha.size())
+                alpha = alpha.view(alpha.size(1),-1,14).cpu().data.numpy().transpose(1,2,0)
                 for t in range(len(words)):
                     if t > 18 :
                         break
