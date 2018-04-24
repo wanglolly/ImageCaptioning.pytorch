@@ -93,7 +93,6 @@ def eval_split(model, crit, loader, eval_kwargs={}):
             fc_feats, att_feats, labels, masks = tmp
             
             value, alphas = model(fc_feats, att_feats, labels)
-            print(alphas.size())
             loss = crit(value, labels[:,1:], masks[:,1:]).data[0]
             loss_sum = loss_sum + loss
             loss_evals = loss_evals + 1
@@ -109,7 +108,8 @@ def eval_split(model, crit, loader, eval_kwargs={}):
         
         #set_trace()
         sents = utils.decode_sequence(loader.get_vocab(), seq) 
-        print(alphas.size())
+        print(seq.size())
+        print(sents.size())
         alps = alphas.view(7, 7).numpy()
 
         for k, sent in enumerate(sents):
