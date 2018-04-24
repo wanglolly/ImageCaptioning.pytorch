@@ -108,9 +108,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
         
         #set_trace()
         sents = utils.decode_sequence(loader.get_vocab(), seq) 
-        print(seq.size())
-        print(len(sents))
-        alps = alphas.view(7, 7).numpy()
+        alphas.view(50,-1,14).data.numpy().transpose(1,2,0)
 
         for k, sent in enumerate(sents):
             entry = {'image_id': data['infos'][k]['id'], 'caption': sent}
@@ -138,6 +136,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                     plt.imshow(oriimg)
                     #alp_curr = alps[t, :].view(14,14)
                     #alp_img = skimage.transform.pyramid_expand(alp_curr, upscale = 16, sigma = 20)
+                    alps = np.squeeze(alphas[:, :, t])
                     alps = resize(alps, (224, 224))
                     plt.imshow(alps, alpha = 0.85)
                     plt.axis('off')
