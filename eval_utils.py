@@ -108,6 +108,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
         
         #set_trace()
         sents = utils.decode_sequence(loader.get_vocab(), seq) 
+        print(alphas.size())
         alps = alphas.view(7, 7).numpy()
 
         for k, sent in enumerate(sents):
