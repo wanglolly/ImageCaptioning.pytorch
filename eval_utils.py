@@ -15,7 +15,6 @@ import time
 import os
 import sys
 import misc.utils as utils
-from scipy import ndimage
 import skimage.transform
 import matplotlib.pyplot as plt
 from PIL import Image
@@ -125,7 +124,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
 
                 #plot attension image
                 words = entry['caption'].split(" ")
-                oriimg = ndimage.imread('vis/imgs/img' + str(len(predictions)) + '.jpg')
+                oriimg = Image.open('vis/imgs/img' + str(len(predictions)) + '.jpg')
                 oriimg.resize([224, 224], Image.LANCZOS)
                 plt.subplot(4, 5 , 1)
                 plt.imshow(oriimg)
