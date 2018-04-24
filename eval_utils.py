@@ -140,7 +140,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                     alps = resize(alps, (224, 224))
                     plt.imshow(alps, alpha = 0.85)
                     plt.axis('off')
-                plt.savefig('vis/attention.jpg')
+                plt.savefig('vis/attention/' + str(len(predictions)) + '.jpg')
 
             if verbose:
                 print('image %s: %s' %(entry['image_id'], entry['caption']))
