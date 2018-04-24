@@ -58,7 +58,6 @@ class OldModel(CaptionModel):
 
         outputs = []
         weights = []
-        print(seq.size())
         for i in range(seq.size(1) - 1):
             if self.training and i >= 1 and self.ss_prob > 0.0: # otherwiste no need to sample
                 sample_prob = fc_feats.data.new(batch_size).uniform_(0, 1)
@@ -85,8 +84,7 @@ class OldModel(CaptionModel):
             output = F.log_softmax(self.logit(self.dropout(output)))
             outputs.append(output)
             weights.append(weight)
-        print('model')
-        print(weight.size())
+        print(len(weights))
         return torch.cat([_.unsqueeze(1) for _ in outputs], 1), weights
 
     def get_logprobs_state(self, it, tmp_fc_feats, tmp_att_feats, state):
