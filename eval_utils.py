@@ -92,8 +92,8 @@ def eval_split(model, crit, loader, eval_kwargs={}):
             tmp = [Variable(torch.from_numpy(_), volatile=True).cuda() for _ in tmp]
             fc_feats, att_feats, labels, masks = tmp
 
-            #alphas = model(fc_feats, att_feats, labels)
-            loss = crit(model(fc_feats, att_feats, labels), labels[:,1:], masks[:,1:]).data[0]
+            alphas = model(fc_feats, att_feats, labels)
+            loss = crit(alphas, labels[:,1:], masks[:,1:]).data[0]
             loss_sum = loss_sum + loss
             loss_evals = loss_evals + 1
 
@@ -108,7 +108,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
         
         #set_trace()
         sents = utils.decode_sequence(loader.get_vocab(), seq) 
-        #alphas = torch.transpose(torch.stack(alphas), 1, 0)
+        alphas = torch.transpose(torch.stack(alphas), 1, 0)
 
         for k, sent in enumerate(sents):
             entry = {'image_id': data['infos'][k]['id'], 'caption': sent}
@@ -122,23 +122,23 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                 os.system(cmd)
 
                 #plot attension image
-                #oriimg = ndimage.imread('vis/imgs/img' + str(len(predictions)) + '.jpg')
-                #words = entry['caption'].split(" ")
-                #plt.subplot(4, 5 , 1)
-                #plt.imshow(oriimg)
-                #plt.axis('off')
-                #for t in range(len(words)):
-                #    if t > 18 :
-                #        break
-                #    plt.subplot(4, 5, t + 2)
-                #    plt.imshow(oriimg)
-                #    plt.text(0, 1, '%s'%(words[t]), color='black', backgroundcolor='white', fontsize = 8)
-                #    plt.imshow(oriimg)
-                #    alp_curr = alphas.cpu().data.numpy()[t, :]
-                #    alp_img = skimage.transform.pyramid_expand(alp_curr, upscale = 16, sigma = 20)
-                #    plt.imshow(alp_img, alpha = 0.85)
-                #    plt.axis('off')
-                #plt.savefig('vis/attention.jpg')
+                oriimg = ndimage.imread('vis/imgs/img' + str(len(predictions)) + '.jpg')
+                words = entry['caption'].split(" ")
+                plt.subplot(4, 5 , 1)
+                plt.imshow(oriimg)
+                plt.axis('off')
+                for t in range(len(words)):
+                    if t > 18 :
+                        break
+                    plt.subplot(4, 5, t + 2)
+                    plt.imshow(oriimg)
+                    plt.text(0, 1, '%s'%(words[t]), color='black', backgroundcolor='white', fontsize = 8)
+                    plt.imshow(oriimg)
+                    alp_curr = alphas.cpu().data.numpy()[t, :]
+                    alp_img = skimage.transform.pyramid_expand(alp_curr, upscale = 16, sigma = 20)
+                    plt.imshow(alp_img, alpha = 0.85)
+                    plt.axis('off')
+                plt.savefig('vis/attention.jpg')
 
             if verbose:
                 print('image %s: %s' %(entry['image_id'], entry['caption']))
