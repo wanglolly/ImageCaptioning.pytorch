@@ -125,6 +125,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                 words = entry['caption'].split(" ")
                 oriimg = Image.open('vis/imgs/img' + str(len(predictions)) + '.jpg')
                 oriimg.resize([224, 224], Image.LANCZOS)
+                plt.clf()
                 plt.subplot(4, 5, 1)
                 plt.imshow(oriimg)
                 plt.axis('off')
@@ -141,6 +142,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                     plt.imshow(alps, alpha = 0.85)
                     plt.axis('off')
                 plt.savefig('vis/attention/' + str(len(predictions)) + '.jpg')
+                plt.clf()
 
             if verbose:
                 print('image %s: %s' %(entry['image_id'], entry['caption']))
