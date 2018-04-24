@@ -90,7 +90,7 @@ class OldModel(CaptionModel):
         # 'it' is Variable contraining a word index
         xt = self.embed(it)
 
-        output, state = self.core(xt, tmp_fc_feats, tmp_att_feats, state)
+        output, state, _ = self.core(xt, tmp_fc_feats, tmp_att_feats, state)
         logprobs = F.log_softmax(self.logit(self.dropout(output)))
 
         return logprobs, state
@@ -171,7 +171,7 @@ class OldModel(CaptionModel):
                 seq.append(it) #seq[t] the input of t+2 time step
                 seqLogprobs.append(sampleLogprobs.view(-1))
 
-            output, state = self.core(xt, fc_feats, att_feats, state)
+            output, state, _ = self.core(xt, fc_feats, att_feats, state)
             logprobs = F.log_softmax(self.logit(self.dropout(output)))
 
         return torch.cat([_.unsqueeze(1) for _ in seq], 1), torch.cat([_.unsqueeze(1) for _ in seqLogprobs], 1)
