@@ -81,7 +81,6 @@ def eval_split(model, crit, loader, eval_kwargs={}):
     loss_sum = 0
     loss_evals = 1e-8
     predictions = []
-    alphas = []
     while True:
         data = loader.get_batch(split)
         n = n + loader.batch_size
@@ -104,12 +103,11 @@ def eval_split(model, crit, loader, eval_kwargs={}):
         fc_feats, att_feats = tmp
         # forward the model to also get generated samples for each image
         seq, weight = model.sample(fc_feats, att_feats, eval_kwargs)
-        alphas.append(weight)
         
         #set_trace()
         sents = utils.decode_sequence(loader.get_vocab(), seq) 
         #alps = torch.cat(alphas[0][1:], 0)
-        alps = weight.data.cpu()
+        alps = weight.numpy()
 
         for k, sent in enumerate(sents):
             entry = {'image_id': data['infos'][k]['id'], 'caption': sent}
@@ -126,7 +124,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                 words = entry['caption'].split(" ")
                 oriimg = Image.open('vis/imgs/img' + str(len(predictions)) + '.jpg')
                 oriimg.resize([224, 224], Image.LANCZOS)
-                plt.subplot(4, 5 , 1)
+                plt.subplot(4, 5, 1)
                 plt.imshow(oriimg)
                 plt.axis('off')
                 for t in range(len(words)):
@@ -135,7 +133,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                     plt.subplot(4, 5, t + 2)
                     plt.text(0, 1, '%s'%(words[t]), color='black', backgroundcolor='white', fontsize = 8)
                     plt.imshow(oriimg)
-                    alp_curr = alps[t, :].view(14, 14)
+                    alp_curr = alps[t, :]
                     alp_img = skimage.transform.pyramid_expand(alp_curr, upscale = 16, sigma = 20)
                     plt.imshow(alp_img, alpha = 0.85)
                     plt.axis('off')
