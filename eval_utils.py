@@ -18,7 +18,7 @@ import misc.utils as utils
 import skimage.transform
 import matplotlib.pyplot as plt
 from PIL import Image
-import cv2
+from skimage.transform import resize
 
 def language_eval(dataset, preds, model_id, split):
     import sys
@@ -136,7 +136,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                     plt.imshow(oriimg)
                     #alp_curr = alps[t, :].view(14,14)
                     #alp_img = skimage.transform.pyramid_expand(alp_curr, upscale = 16, sigma = 20)
-                    alps = cv2.resize(alps, dsize=(224, 224), interpolation=cv2.INTER_CUBIC)
+                    alps = resize(alps, (224, 224))
                     plt.imshow(alps, alpha = 0.85)
                     plt.axis('off')
                 plt.savefig('vis/attention.jpg')
