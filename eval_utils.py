@@ -93,6 +93,8 @@ def eval_split(model, crit, loader, eval_kwargs={}):
             fc_feats, att_feats, labels, masks = tmp
             
             value, alphas = model(fc_feats, att_feats, labels)
+            print('eval')
+            print(alphas.size())
             loss = crit(value, labels[:,1:], masks[:,1:]).data[0]
             loss_sum = loss_sum + loss
             loss_evals = loss_evals + 1
@@ -124,7 +126,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                 #plot attension image
                 words = entry['caption'].split(" ")
                 oriimg = Image.open('vis/imgs/img' + str(len(predictions)) + '.jpg')
-                oriimg.resize([224, 224], Image.LANCZOS)
+                oriimg.resize([224, 224])
                 plt.clf()
                 plt.subplot(4, 5, 1)
                 plt.imshow(oriimg)
