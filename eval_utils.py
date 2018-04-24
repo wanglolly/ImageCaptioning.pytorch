@@ -110,7 +110,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
         #set_trace()
         sents = utils.decode_sequence(loader.get_vocab(), seq) 
         alphas = torch.cat(alphas[0][1:], 0)
-        alphas = alphas.data.cpu()
+        alps = alphas.data.cpu()
 
         for k, sent in enumerate(sents):
             entry = {'image_id': data['infos'][k]['id'], 'caption': sent}
@@ -137,7 +137,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                     plt.imshow(oriimg)
                     plt.text(0, 1, '%s'%(words[t]), color='black', backgroundcolor='white', fontsize = 8)
                     plt.imshow(oriimg)
-                    alp_curr = alphas[t, :].view(14, 14)
+                    alp_curr = alps[t, :].view(14, 14)
                     alp_img = skimage.transform.pyramid_expand(alp_curr, upscale = 16, sigma = 20)
                     plt.imshow(alp_img, alpha = 0.85)
                     plt.axis('off')
