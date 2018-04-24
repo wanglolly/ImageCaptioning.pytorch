@@ -18,6 +18,7 @@ import misc.utils as utils
 from scipy import ndimage
 import skimage.transform
 import matplotlib.pyplot as plt
+from PIL import Image
 
 def language_eval(dataset, preds, model_id, split):
     import sys
@@ -81,7 +82,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
     loss_sum = 0
     loss_evals = 1e-8
     predictions = []
-    alphas = None
+    alphas = []
     while True:
         data = loader.get_batch(split)
         n = n + loader.batch_size
@@ -92,8 +93,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
             tmp = [Variable(torch.from_numpy(_), volatile=True).cuda() for _ in tmp]
             fc_feats, att_feats, labels, masks = tmp
 
-            alphas = model(fc_feats, att_feats, labels)
-            loss = crit(alphas, labels[:,1:], masks[:,1:]).data[0]
+            loss = crit(model(fc_feats, att_feats, labels), labels[:,1:], masks[:,1:]).data[0]
             loss_sum = loss_sum + loss
             loss_evals = loss_evals + 1
 
@@ -104,11 +104,13 @@ def eval_split(model, crit, loader, eval_kwargs={}):
         tmp = [Variable(torch.from_numpy(_), volatile=True).cuda() for _ in tmp]
         fc_feats, att_feats = tmp
         # forward the model to also get generated samples for each image
-        seq, _ = model.sample(fc_feats, att_feats, eval_kwargs)
+        seq, weight = model.sample(fc_feats, att_feats, eval_kwargs)
+        alphas.append(weight)
         
         #set_trace()
         sents = utils.decode_sequence(loader.get_vocab(), seq) 
-        alphas = torch.transpose(torch.stack(alphas), 1, 0)
+        alphas = torch.cat(alphas[0][1:], 0)
+        alphas = alphas.cpu().data
 
         for k, sent in enumerate(sents):
             entry = {'image_id': data['infos'][k]['id'], 'caption': sent}
@@ -122,8 +124,9 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                 os.system(cmd)
 
                 #plot attension image
-                oriimg = ndimage.imread('vis/imgs/img' + str(len(predictions)) + '.jpg')
                 words = entry['caption'].split(" ")
+                oriimg = ndimage.imread('vis/imgs/img' + str(len(predictions)) + '.jpg')
+                oriimg.resize([224, 224], Image.LANCZOS)
                 plt.subplot(4, 5 , 1)
                 plt.imshow(oriimg)
                 plt.axis('off')
@@ -134,7 +137,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                     plt.imshow(oriimg)
                     plt.text(0, 1, '%s'%(words[t]), color='black', backgroundcolor='white', fontsize = 8)
                     plt.imshow(oriimg)
-                    alp_curr = alphas.cpu().data.numpy()[t, :]
+                    alp_curr = alphas[t, :].view(14, 14)
                     alp_img = skimage.transform.pyramid_expand(alp_curr, upscale = 16, sigma = 20)
                     plt.imshow(alp_img, alpha = 0.85)
                     plt.axis('off')
