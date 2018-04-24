@@ -108,7 +108,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
         
         #set_trace()
         sents = utils.decode_sequence(loader.get_vocab(), seq) 
-        alphas.view(50,-1,14).cpu().data.numpy().transpose(1,2,0)
+        alphas = alphas.view(50,-1,14).cpu().data.numpy().transpose(1,2,0)
 
         for k, sent in enumerate(sents):
             entry = {'image_id': data['infos'][k]['id'], 'caption': sent}
