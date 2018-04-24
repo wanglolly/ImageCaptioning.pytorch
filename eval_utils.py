@@ -92,7 +92,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
             tmp = [Variable(torch.from_numpy(_), volatile=True).cuda() for _ in tmp]
             fc_feats, att_feats, labels, masks = tmp
             value, alphas = model(fc_feats, att_feats, labels)
-            print(len(alphas))
+            #print(len(alphas))
             loss = crit(value, labels[:,1:], masks[:,1:]).data[0]
             loss_sum = loss_sum + loss
             loss_evals = loss_evals + 1
@@ -129,7 +129,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                 plt.imshow(oriimg)
                 plt.axis('off')
                 alpha = alphas[k]
-                print(alpha.size())
+                #print(alpha.size())
                 alpha = alpha.view(alpha.size(0),-1,14).cpu().data.numpy().transpose(1,2,0)
                 for t in range(len(words)):
                     if t > 18 :
