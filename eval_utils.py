@@ -108,8 +108,8 @@ def eval_split(model, crit, loader, eval_kwargs={}):
         
         #set_trace()
         sents = utils.decode_sequence(loader.get_vocab(), seq) 
-        alphas = torch.cat(alphas[0][1:], 0)
-        alps = alphas.numpy()
+        #alps = torch.cat(alphas[0][1:], 0)
+        alps = weight.numpy()
 
         for k, sent in enumerate(sents):
             entry = {'image_id': data['infos'][k]['id'], 'caption': sent}
@@ -133,7 +133,6 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                     if t > 18 :
                         break
                     plt.subplot(4, 5, t + 2)
-                    plt.imshow(oriimg)
                     plt.text(0, 1, '%s'%(words[t]), color='black', backgroundcolor='white', fontsize = 8)
                     plt.imshow(oriimg)
                     alp_curr = alps[t, :].view(14, 14)
