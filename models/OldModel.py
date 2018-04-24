@@ -80,11 +80,11 @@ class OldModel(CaptionModel):
 
             xt = self.embed(it)
 
-            output, state = self.core(xt, fc_feats, att_feats, state)
+            output, state, weight = self.core(xt, fc_feats, att_feats, state)
             output = F.log_softmax(self.logit(self.dropout(output)))
             outputs.append(output)
 
-        return torch.cat([_.unsqueeze(1) for _ in outputs], 1)
+        return torch.cat([_.unsqueeze(1) for _ in outputs], 1), weight
 
     def get_logprobs_state(self, it, tmp_fc_feats, tmp_att_feats, state):
         # 'it' is Variable contraining a word index
@@ -225,7 +225,7 @@ class ShowAttendTellCore(nn.Module):
         att_res = torch.bmm(weight.unsqueeze(1), att_feats_).squeeze(1) # batch * att_feat_size
 
         output, state = self.rnn(torch.cat([xt, att_res], 1).unsqueeze(0), state)
-        return output.squeeze(0), state
+        return output.squeeze(0), state, weight
 
 class AllImgCore(nn.Module):
     def __init__(self, opt):

@@ -111,7 +111,8 @@ def train(opt, lossWriter):
         fc_feats, att_feats, labels, masks = tmp
         
         optimizer.zero_grad()
-        loss = crit(model(fc_feats, att_feats, labels), labels[:,1:], masks[:,1:])
+        value, _ = model(fc_feats, att_feats, labels)
+        loss = crit(value, labels[:,1:], masks[:,1:])
         loss.backward()
         utils.clip_gradient(optimizer, opt.grad_clip)
         optimizer.step()

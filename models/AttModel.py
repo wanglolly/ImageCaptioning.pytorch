@@ -94,11 +94,11 @@ class AttModel(CaptionModel):
 
             xt = self.embed(it)
 
-            output, state = self.core(xt, fc_feats, att_feats, p_att_feats, state)
+            output, state, weight = self.core(xt, fc_feats, att_feats, p_att_feats, state)
             output = F.log_softmax(self.logit(output))
             outputs.append(output)
 
-        return torch.cat([_.unsqueeze(1) for _ in outputs], 1)
+        return torch.cat([_.unsqueeze(1) for _ in outputs], 1), weight
 
     def get_logprobs_state(self, it, tmp_fc_feats, tmp_att_feats, tmp_p_att_feats, state):
         # 'it' is Variable contraining a word index
@@ -379,7 +379,7 @@ class TopDownCore(nn.Module):
 
         h_att, c_att = self.att_lstm(att_lstm_input, (state[0][0], state[1][0]))
 
-        att = self.attention(h_att, att_feats, p_att_feats)
+        att, weight = self.attention(h_att, att_feats, p_att_feats)
 
         lang_lstm_input = torch.cat([att, h_att], 1)
         # lang_lstm_input = torch.cat([att, F.dropout(h_att, self.drop_prob_lm, self.training)], 1) ?????
@@ -389,7 +389,7 @@ class TopDownCore(nn.Module):
         output = F.dropout(h_lang, self.drop_prob_lm, self.training)
         state = (torch.stack([h_att, h_lang]), torch.stack([c_att, c_lang]))
 
-        return output, state
+        return output, state, weight
 
 class Attention(nn.Module):
     def __init__(self, opt):
@@ -417,7 +417,7 @@ class Attention(nn.Module):
         att_feats_ = att_feats.view(-1, att_size, self.rnn_size) # batch * att_size * att_feat_size
         att_res = torch.bmm(weight.unsqueeze(1), att_feats_).squeeze(1) # batch * att_feat_size
 
-        return att_res
+        return att_res, weight
 
 
 class Att2in2Core(nn.Module):

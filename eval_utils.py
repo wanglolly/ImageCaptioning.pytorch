@@ -90,7 +90,8 @@ def eval_split(model, crit, loader, eval_kwargs={}):
             tmp = [data['fc_feats'], data['att_feats'], data['labels'], data['masks']]
             tmp = [Variable(torch.from_numpy(_), volatile=True).cuda() for _ in tmp]
             fc_feats, att_feats, labels, masks = tmp
-
+            
+            value, alphas = model(fc_feats, att_feats, labels)
             loss = crit(model(fc_feats, att_feats, labels), labels[:,1:], masks[:,1:]).data[0]
             loss_sum = loss_sum + loss
             loss_evals = loss_evals + 1
@@ -102,12 +103,11 @@ def eval_split(model, crit, loader, eval_kwargs={}):
         tmp = [Variable(torch.from_numpy(_), volatile=True).cuda() for _ in tmp]
         fc_feats, att_feats = tmp
         # forward the model to also get generated samples for each image
-        seq, weight = model.sample(fc_feats, att_feats, eval_kwargs)
+        seq, _ = model.sample(fc_feats, att_feats, eval_kwargs)
         
         #set_trace()
         sents = utils.decode_sequence(loader.get_vocab(), seq) 
-        #alps = torch.cat(alphas[0][1:], 0)
-        alps = weight.numpy()
+        alps = torch.cat(alphas[0][1:], 0)
 
         for k, sent in enumerate(sents):
             entry = {'image_id': data['infos'][k]['id'], 'caption': sent}
@@ -133,7 +133,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                     plt.subplot(4, 5, t + 2)
                     plt.text(0, 1, '%s'%(words[t]), color='black', backgroundcolor='white', fontsize = 8)
                     plt.imshow(oriimg)
-                    alp_curr = alps[t, :].numpy().view(14,14)
+                    alp_curr = alps[t, :].view(14,14)
                     alp_img = skimage.transform.pyramid_expand(alp_curr, upscale = 16, sigma = 20)
                     plt.imshow(alp_img, alpha = 0.85)
                     plt.axis('off')
