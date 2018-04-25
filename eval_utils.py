@@ -130,16 +130,16 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                     if t > 18 :
                         break
                     plt.subplot(4, 5, t + 2)
-                    plt.text(0, 1, '%s'%(words[t + 1]), color='black', backgroundcolor='white', fontsize = 8)
+                    plt.text(0, 1, '%s'%(words[t]), color='black', backgroundcolor='white', fontsize = 8)
                     plt.imshow(oriimg)
                     alpha = alphas[t]
                     index = Variable(torch.cuda.LongTensor([k * loader.seq_per_img]))
                     alpha = torch.index_select(alpha, 0, index)
                     alpha = alpha.view(-1,14).cpu().data.numpy()
                     alps = resize(alpha, (oriimg.size[1], oriimg.size[0]))
-                    plt.imshow(alps, alpha = 0.2)
+                    plt.imshow(alps, alpha = 0.5)
                     plt.axis('off')
-                plt.savefig('vis/attention/' + str(len(predictions)) + '.jpg')
+                plt.savefig('vis/attention/' + str(len(predictions)) + '.jpg',dpi=1000)
                 plt.clf()
 
             if verbose:
