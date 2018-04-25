@@ -102,6 +102,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
             data['att_feats'][np.arange(loader.batch_size) * loader.seq_per_img]]
         tmp = [Variable(torch.from_numpy(_), volatile=True).cuda() for _ in tmp]
         fc_feats, att_feats = tmp
+        print(fc_feats.size())
         # forward the model to also get generated samples for each image
         seq, state, weights = model.sample(fc_feats, att_feats, eval_kwargs)
         print(len(weights))
