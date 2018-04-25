@@ -133,7 +133,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                     plt.text(0, 1, '%s'%(words[t]), color='black', backgroundcolor='white', fontsize = 8)
                     plt.imshow(oriimg)
                     alpha = alphas[t]
-                    index = torch.LongTensor([k * loader.seq_per_img])
+                    index = Variable(torch.LongTensor([k * loader.seq_per_img]))
                     alpha = torch.index_select(alpha, 0, index)
                     alpha = alpha.view(-1,14).cpu().data.numpy()
                     alps = resize(alpha, (oriimg.size[1], oriimg.size[0]))
