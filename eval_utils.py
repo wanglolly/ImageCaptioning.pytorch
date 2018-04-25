@@ -105,7 +105,6 @@ def eval_split(model, crit, loader, eval_kwargs={}):
         # forward the model to also get generated samples for each image
         seq, state, weights = model.sample(fc_feats, att_feats, eval_kwargs)
         #set_trace()
-        print(np.arange(loader.batch_size) * loader.seq_per_img)
         sents = utils.decode_sequence(loader.get_vocab(), seq) 
         for k, sent in enumerate(sents):
             entry = {'image_id': data['infos'][k]['id'], 'caption': sent}
@@ -138,7 +137,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                     alps = resize(alpha, (oriimg.size[1], oriimg.size[0]))
                     plt.imshow(alps, alpha = 0.7)
                     plt.axis('off')
-                plt.savefig('vis/attention/' + str(len(predictions)) + '.jpg',dpi=500)
+                plt.savefig('vis/attention/' + str(len(predictions)) + '.jpg',dpi=200)
                 plt.clf()
 
             if verbose:
