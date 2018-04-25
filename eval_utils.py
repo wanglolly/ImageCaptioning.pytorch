@@ -106,9 +106,6 @@ def eval_split(model, crit, loader, eval_kwargs={}):
         seq, state, weights = model.sample(fc_feats, att_feats, eval_kwargs)
         #set_trace()
         sents = utils.decode_sequence(loader.get_vocab(), seq) 
-        print(alphas[0])
-        print(alphas[1])
-        print(alphas[16])
         for k, sent in enumerate(sents):
             entry = {'image_id': data['infos'][k]['id'], 'caption': sent}
             if eval_kwargs.get('dump_path', 0) == 1:
@@ -134,6 +131,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                     plt.text(0, 1, '%s'%(words[t]), color='black', backgroundcolor='white', fontsize = 8)
                     plt.imshow(oriimg)
                     alpha = alphas[t]
+                    print(k * loader.seq_per_img)
                     index = Variable(torch.cuda.LongTensor([k * loader.seq_per_img]))
                     alpha = torch.index_select(alpha, 0, index)
                     alpha = alpha.view(-1,14).cpu().data.numpy()
