@@ -107,6 +107,8 @@ def eval_split(model, crit, loader, eval_kwargs={}):
         #set_trace()
         sents = utils.decode_sequence(loader.get_vocab(), seq) 
         print(alphas[0])
+        print(alphas[1])
+        print(alphas[16])
         for k, sent in enumerate(sents):
             entry = {'image_id': data['infos'][k]['id'], 'caption': sent}
             if eval_kwargs.get('dump_path', 0) == 1:
