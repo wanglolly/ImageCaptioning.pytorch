@@ -128,7 +128,7 @@ class DataLoader(data.Dataset):
 
         infos = []
         gts = []
-
+        print(batch_size)
         for i in range(batch_size):
             # fetch image
             tmp_fc, tmp_att,\
