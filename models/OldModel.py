@@ -84,9 +84,6 @@ class OldModel(CaptionModel):
             output = F.log_softmax(self.logit(self.dropout(output)))
             outputs.append(output)
             weights.append(weight)
-            print(weight.size())
-        print('len')
-        print(len(weights))
         return torch.cat([_.unsqueeze(1) for _ in outputs], 1), weights
 
     def get_logprobs_state(self, it, tmp_fc_feats, tmp_att_feats, state):
@@ -123,14 +120,14 @@ class OldModel(CaptionModel):
                     it = fc_feats.data.new(beam_size).long().zero_()
                     xt = self.embed(Variable(it, requires_grad=False))
 
-                output, state, _ = self.core(xt, tmp_fc_feats, tmp_att_feats, state)
+                output, state, weight = self.core(xt, tmp_fc_feats, tmp_att_feats, state)
                 logprobs = F.log_softmax(self.logit(self.dropout(output)))
 
             self.done_beams[k] = self.beam_search(state, logprobs, tmp_fc_feats, tmp_att_feats, opt=opt)
             seq[:, k] = self.done_beams[k][0]['seq'] # the first beam has highest cumulative score
             seqLogprobs[:, k] = self.done_beams[k][0]['logps']
         # return the samples and their log likelihoods
-        return seq.transpose(0, 1), seqLogprobs.transpose(0, 1)
+        return seq.transpose(0, 1), seqLogprobs.transpose(0, 1), weight
 
     def sample(self, fc_feats, att_feats, opt={}):
         sample_max = opt.get('sample_max', 1)
@@ -174,10 +171,10 @@ class OldModel(CaptionModel):
                 seq.append(it) #seq[t] the input of t+2 time step
                 seqLogprobs.append(sampleLogprobs.view(-1))
 
-            output, state, _ = self.core(xt, fc_feats, att_feats, state)
+            output, state, weight = self.core(xt, fc_feats, att_feats, state)
             logprobs = F.log_softmax(self.logit(self.dropout(output)))
 
-        return torch.cat([_.unsqueeze(1) for _ in seq], 1), torch.cat([_.unsqueeze(1) for _ in seqLogprobs], 1)
+        return torch.cat([_.unsqueeze(1) for _ in seq], 1), torch.cat([_.unsqueeze(1) for _ in seqLogprobs], 1), weight
 
 
 class ShowAttendTellCore(nn.Module):

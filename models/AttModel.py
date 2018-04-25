@@ -140,14 +140,14 @@ class AttModel(CaptionModel):
                     it = fc_feats.data.new(beam_size).long().zero_()
                     xt = self.embed(Variable(it, requires_grad=False))
 
-                output, state, _ = self.core(xt, tmp_fc_feats, tmp_att_feats, tmp_p_att_feats, state)
+                output, state, weight = self.core(xt, tmp_fc_feats, tmp_att_feats, tmp_p_att_feats, state)
                 logprobs = F.log_softmax(self.logit(output))
 
             self.done_beams[k] = self.beam_search(state, logprobs, tmp_fc_feats, tmp_att_feats, tmp_p_att_feats, opt=opt)
             seq[:, k] = self.done_beams[k][0]['seq'] # the first beam has highest cumulative score
             seqLogprobs[:, k] = self.done_beams[k][0]['logps']
         # return the samples and their log likelihoods
-        return seq.transpose(0, 1), seqLogprobs.transpose(0, 1)
+        return seq.transpose(0, 1), seqLogprobs.transpose(0, 1), weight
 
     def sample(self, fc_feats, att_feats, opt={}):
         sample_max = opt.get('sample_max', 1)
@@ -201,10 +201,10 @@ class AttModel(CaptionModel):
 
                 seqLogprobs.append(sampleLogprobs.view(-1))
 
-            output, state, _ = self.core(xt, fc_feats, att_feats, p_att_feats, state)
+            output, state, weight = self.core(xt, fc_feats, att_feats, p_att_feats, state)
             logprobs = F.log_softmax(self.logit(output))
 
-        return torch.cat([_.unsqueeze(1) for _ in seq], 1), torch.cat([_.unsqueeze(1) for _ in seqLogprobs], 1)
+        return torch.cat([_.unsqueeze(1) for _ in seq], 1), torch.cat([_.unsqueeze(1) for _ in seqLogprobs], 1), weight
 
 class AdaAtt_lstm(nn.Module):
     def __init__(self, opt, use_maxout=True):
