@@ -139,7 +139,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                     #alp_curr = alps[t, :].view(14,14)
                     #alp_img = skimage.transform.pyramid_expand(alp_curr, upscale = 16, sigma = 20)
                     alps = np.squeeze(alpha[:, :, t])
-                    alps = resize(alps, (oriimg.size(0), oriimg.size(1)))
+                    alps = resize(alps, [oriimg.size(0), oriimg.size(1)])
                     plt.imshow(alps, alpha = 0.85)
                     plt.axis('off')
                 plt.savefig('vis/attention/' + str(len(predictions)) + '.jpg')
