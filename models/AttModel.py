@@ -129,6 +129,7 @@ class AttModel(CaptionModel):
         # lets process every image independently for now, for simplicity
 
         self.done_beams = [[] for _ in range(batch_size)]
+        weights = []
         for k in range(batch_size):
             state = self.init_hidden(beam_size)
             tmp_fc_feats = fc_feats[k:k+1].expand(beam_size, fc_feats.size(1))
@@ -142,12 +143,13 @@ class AttModel(CaptionModel):
 
                 output, state, weight = self.core(xt, tmp_fc_feats, tmp_att_feats, tmp_p_att_feats, state)
                 logprobs = F.log_softmax(self.logit(output))
+                weights.append(weight)
 
             self.done_beams[k] = self.beam_search(state, logprobs, tmp_fc_feats, tmp_att_feats, tmp_p_att_feats, opt=opt)
             seq[:, k] = self.done_beams[k][0]['seq'] # the first beam has highest cumulative score
             seqLogprobs[:, k] = self.done_beams[k][0]['logps']
         # return the samples and their log likelihoods
-        return seq.transpose(0, 1), seqLogprobs.transpose(0, 1), weight
+        return seq.transpose(0, 1), seqLogprobs.transpose(0, 1), weights
 
     def sample(self, fc_feats, att_feats, opt={}):
         sample_max = opt.get('sample_max', 1)
@@ -170,6 +172,7 @@ class AttModel(CaptionModel):
 
         seq = []
         seqLogprobs = []
+        weights = []
         for t in range(self.seq_length + 1):
             if t == 0: # input <bos>
                 it = fc_feats.data.new(batch_size).long().zero_()
@@ -203,8 +206,9 @@ class AttModel(CaptionModel):
 
             output, state, weight = self.core(xt, fc_feats, att_feats, p_att_feats, state)
             logprobs = F.log_softmax(self.logit(output))
+            weights.append(weight)
 
-        return torch.cat([_.unsqueeze(1) for _ in seq], 1), torch.cat([_.unsqueeze(1) for _ in seqLogprobs], 1), weight
+        return torch.cat([_.unsqueeze(1) for _ in seq], 1), torch.cat([_.unsqueeze(1) for _ in seqLogprobs], 1), weights
 
 class AdaAtt_lstm(nn.Module):
     def __init__(self, opt, use_maxout=True):
