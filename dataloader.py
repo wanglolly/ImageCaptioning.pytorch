@@ -125,8 +125,6 @@ class DataLoader(data.Dataset):
             [batch_size * seq_per_img, self.seq_length + 2], dtype='float32')
 
         wrapped = False
-        print(seq_per_img)
-        print(self.seq_length)
         infos = []
         gts = []
         for i in range(batch_size):

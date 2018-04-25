@@ -90,6 +90,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
             # forward the model to get loss
             tmp = [data['fc_feats'], data['att_feats'], data['labels'], data['masks']]
             tmp = [Variable(torch.from_numpy(_), volatile=True).cuda() for _ in tmp]
+            print(data['labels'])
             fc_feats, att_feats, labels, masks = tmp
             value, alphas = model(fc_feats, att_feats, labels)
             loss = crit(value, labels[:,1:], masks[:,1:]).data[0]
