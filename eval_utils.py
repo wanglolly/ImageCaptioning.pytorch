@@ -102,11 +102,8 @@ def eval_split(model, crit, loader, eval_kwargs={}):
             data['att_feats'][np.arange(loader.batch_size) * loader.seq_per_img]]
         tmp = [Variable(torch.from_numpy(_), volatile=True).cuda() for _ in tmp]
         fc_feats, att_feats = tmp
-        print(fc_feats.size())
         # forward the model to also get generated samples for each image
         seq, state, weights = model.sample(fc_feats, att_feats, eval_kwargs)
-        print(len(weights))
-        print(seq.size())
         
         #set_trace()
         sents = utils.decode_sequence(loader.get_vocab(), seq) 
@@ -129,7 +126,6 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                 plt.subplot(4, 5, 1)
                 plt.imshow(oriimg)
                 plt.axis('off')
-                alpha = alphas[k]
                 alpha = alpha.view(alpha.size(0),-1,14).cpu().data.numpy().transpose(1,2,0)
                 for t in range(len(words)):
                     if t > 18 :
@@ -139,7 +135,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                     plt.imshow(oriimg)
                     #alp_curr = alps[t, :].view(14,14)
                     #alp_img = skimage.transform.pyramid_expand(alp_curr, upscale = 16, sigma = 20)
-                    alps = np.squeeze(alpha[:, :, t])
+                    alps = np.squeeze(alphas[t:t+1,k:k+1, ])
                     alps = resize(alps, (oriimg.size[1], oriimg.size[0]))
                     plt.imshow(alps, alpha = 0.85)
                     plt.axis('off')

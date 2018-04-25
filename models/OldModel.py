@@ -124,7 +124,6 @@ class OldModel(CaptionModel):
                 output, state, weight = self.core(xt, tmp_fc_feats, tmp_att_feats, state)
                 logprobs = F.log_softmax(self.logit(self.dropout(output)))
                 weights.append(weight)
-                print(weight.size())
 
             self.done_beams[k] = self.beam_search(state, logprobs, tmp_fc_feats, tmp_att_feats, opt=opt)
             seq[:, k] = self.done_beams[k][0]['seq'] # the first beam has highest cumulative score
