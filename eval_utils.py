@@ -123,7 +123,6 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                 #plot attension image
                 words = entry['caption'].split(" ")
                 oriimg = Image.open('vis/imgs/img' + str(len(predictions)) + '.jpg')
-                oriimg.resize((224, 224))
                 plt.clf()
                 plt.subplot(4, 5, 1)
                 plt.imshow(oriimg)
@@ -140,7 +139,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                     #alp_curr = alps[t, :].view(14,14)
                     #alp_img = skimage.transform.pyramid_expand(alp_curr, upscale = 16, sigma = 20)
                     alps = np.squeeze(alpha[:, :, t])
-                    alps = resize(alps, (224, 224))
+                    alps = resize(alps, (oriimg.size(0), oriimg.size(1)))
                     plt.imshow(alps, alpha = 0.85)
                     plt.axis('off')
                 plt.savefig('vis/attention/' + str(len(predictions)) + '.jpg')
