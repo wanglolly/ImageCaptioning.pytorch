@@ -126,17 +126,17 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                 plt.subplot(4, 5, 1)
                 plt.imshow(oriimg)
                 plt.axis('off')
-                alpha = alpha.view(alpha.size(0),-1,14).cpu().data.numpy().transpose(1,2,0)
                 for t in range(len(words)):
                     if t > 18 :
                         break
                     plt.subplot(4, 5, t + 2)
                     plt.text(0, 1, '%s'%(words[t]), color='black', backgroundcolor='white', fontsize = 8)
                     plt.imshow(oriimg)
-                    #alp_curr = alps[t, :].view(14,14)
-                    #alp_img = skimage.transform.pyramid_expand(alp_curr, upscale = 16, sigma = 20)
-                    alps = np.squeeze(alphas[t:t+1,k:k+1, ])
-                    alps = resize(alps, (oriimg.size[1], oriimg.size[0]))
+                    alpha = alphas[t]
+                    index = torch.tensor([k * loader.seq_per_img])
+                    alpha = torch.index_select(alpha, 0, index)
+                    alpha = alpha.view(-1,14).cpu().data.numpy()
+                    alps = resize(alpha, (oriimg.size[1], oriimg.size[0]))
                     plt.imshow(alps, alpha = 0.85)
                     plt.axis('off')
                 plt.savefig('vis/attention/' + str(len(predictions)) + '.jpg')
