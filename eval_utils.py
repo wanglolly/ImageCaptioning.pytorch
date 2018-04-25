@@ -137,9 +137,9 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                     alpha = torch.index_select(alpha, 0, index)
                     alpha = alpha.view(-1,14).cpu().data.numpy()
                     alps = resize(alpha, (oriimg.size[1], oriimg.size[0]))
-                    plt.imshow(alps, alpha = 0.5)
+                    plt.imshow(alps, alpha = 0.7)
                     plt.axis('off')
-                plt.savefig('vis/attention/' + str(len(predictions)) + '.jpg',dpi=1000)
+                plt.savefig('vis/attention/' + str(len(predictions)) + '.jpg',dpi=500)
                 plt.clf()
 
             if verbose:
