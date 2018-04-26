@@ -96,6 +96,14 @@ def eval_split(model, crit, loader, eval_kwargs={}):
             loss_sum = loss_sum + loss
             loss_evals = loss_evals + 1
 
+        tmp = [data['fc_feats'][np.arange(loader.batch_size) * loader.seq_per_img], 
+                data['att_feats'][np.arange(loader.batch_size) * loader.seq_per_img], 
+                data['labels'][np.arange(loader.batch_size) * loader.seq_per_img], 
+                data['masks'][np.arange(loader.batch_size) * loader.seq_per_img]]
+        tmp = [Variable(torch.from_numpy(_), volatile=True).cuda() for _ in tmp]
+        fc_feats, att_feats, labels, masks = tmp
+        value, alphas = model(fc_feats, att_feats, labels)
+
         # forward the model to also get generated samples for each image
         # Only leave one feature for each image, in case duplicate sample
         tmp = [data['fc_feats'][np.arange(loader.batch_size) * loader.seq_per_img], 
