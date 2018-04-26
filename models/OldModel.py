@@ -79,7 +79,7 @@ class OldModel(CaptionModel):
                 break
 
             xt = self.embed(it)
-
+            print(att_feats.size())
             output, state, weight = self.core(xt, fc_feats, att_feats, state)
             output = F.log_softmax(self.logit(self.dropout(output)))
             outputs.append(output)
@@ -109,7 +109,7 @@ class OldModel(CaptionModel):
         for k in range(batch_size):
             tmp_fc_feats = fc_feats[k:k+1].expand(beam_size, self.fc_feat_size)
             tmp_att_feats = att_feats[k:k+1].expand(*((beam_size,)+att_feats.size()[1:])).contiguous()
-            
+            print(tmp_att_feats.size())
             state = self.init_hidden(tmp_fc_feats)
 
             beam_seq = torch.LongTensor(self.seq_length, beam_size).zero_()
