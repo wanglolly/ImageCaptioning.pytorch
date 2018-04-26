@@ -91,18 +91,10 @@ def eval_split(model, crit, loader, eval_kwargs={}):
             tmp = [data['fc_feats'], data['att_feats'], data['labels'], data['masks']]
             tmp = [Variable(torch.from_numpy(_), volatile=True).cuda() for _ in tmp]
             fc_feats, att_feats, labels, masks = tmp
-            value, _ = model(fc_feats, att_feats, labels)
+            value, alphas = model(fc_feats, att_feats, labels)
             loss = crit(value, labels[:,1:], masks[:,1:]).data[0]
             loss_sum = loss_sum + loss
             loss_evals = loss_evals + 1
-
-        tmp = [data['fc_feats'][np.arange(loader.batch_size) * loader.seq_per_img], 
-                data['att_feats'][np.arange(loader.batch_size) * loader.seq_per_img], 
-                data['labels'][np.arange(loader.batch_size) * loader.seq_per_img], 
-                data['masks'][np.arange(loader.batch_size) * loader.seq_per_img]]
-        tmp = [Variable(torch.from_numpy(_), volatile=True).cuda() for _ in tmp]
-        fc_feats, att_feats, labels, masks = tmp
-        value, alphas = model(fc_feats, att_feats, labels)
 
         # forward the model to also get generated samples for each image
         # Only leave one feature for each image, in case duplicate sample
@@ -139,7 +131,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                     plt.text(0, 1, '%s'%(words[t]), color='black', backgroundcolor='white', fontsize = 8)
                     plt.imshow(oriimg)
                     alpha = alphas[t]
-                    index = Variable(torch.cuda.LongTensor([k]))
+                    index = Variable(torch.cuda.LongTensor([k * loader.seq_per_img]))
                     alpha = torch.index_select(alpha, 0, index)
                     alpha = alpha.view(-1,14).cpu().data.numpy()
                     alps = resize(alpha, (oriimg.size[1], oriimg.size[0]))
