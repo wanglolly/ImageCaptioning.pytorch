@@ -82,8 +82,6 @@ class OldModel(CaptionModel):
 
             output, state, weight = self.core(xt, fc_feats, att_feats, state)
             output = F.log_softmax(self.logit(self.dropout(output)))
-            print(att_feats.size())
-            print(weight.size())
             outputs.append(output)
             weights.append(weight)
         return torch.cat([_.unsqueeze(1) for _ in outputs], 1), weights
@@ -125,8 +123,6 @@ class OldModel(CaptionModel):
 
                 output, state, weight = self.core(xt, tmp_fc_feats, tmp_att_feats, state)
                 logprobs = F.log_softmax(self.logit(self.dropout(output)))
-                print(tmp_att_feats.size())
-                print(weight.size())
                 weights.append(weight)
 
             self.done_beams[k] = self.beam_search(state, logprobs, tmp_fc_feats, tmp_att_feats, opt=opt)
@@ -231,7 +227,9 @@ class ShowAttendTellCore(nn.Module):
         weight = F.softmax(dot)
         att_feats_ = att_feats.view(-1, att_size, self.att_feat_size) # batch * att_size * att_feat_size
         att_res = torch.bmm(weight.unsqueeze(1), att_feats_).squeeze(1) # batch * att_feat_size
-
+        print(weight.size())
+        print(att_res.size())
+        print(torch.cat([xt, att_res]).size())
         output, state = self.rnn(torch.cat([xt, att_res], 1).unsqueeze(0), state)
         return output.squeeze(0), state, weight
 
