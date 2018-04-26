@@ -82,6 +82,8 @@ class OldModel(CaptionModel):
 
             output, state, weight = self.core(xt, fc_feats, att_feats, state)
             output = F.log_softmax(self.logit(self.dropout(output)))
+            print(att_feats.size())
+            print(weight.size())
             outputs.append(output)
             weights.append(weight)
         return torch.cat([_.unsqueeze(1) for _ in outputs], 1), weights
@@ -123,6 +125,8 @@ class OldModel(CaptionModel):
 
                 output, state, weight = self.core(xt, tmp_fc_feats, tmp_att_feats, state)
                 logprobs = F.log_softmax(self.logit(self.dropout(output)))
+                print(tmp_att_feats.size())
+                print(weight.size())
                 weights.append(weight)
 
             self.done_beams[k] = self.beam_search(state, logprobs, tmp_fc_feats, tmp_att_feats, opt=opt)
