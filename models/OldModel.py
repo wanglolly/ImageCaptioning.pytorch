@@ -79,12 +79,10 @@ class OldModel(CaptionModel):
                 break
 
             xt = self.embed(it)
-            print(att_feats.size())
             output, state, weight = self.core(xt, fc_feats, att_feats, state)
             output = F.log_softmax(self.logit(self.dropout(output)))
             outputs.append(output)
             weights.append(weight)
-            print(len(weights))
         return torch.cat([_.unsqueeze(1) for _ in outputs], 1), weights
 
     def get_logprobs_state(self, it, tmp_fc_feats, tmp_att_feats, state):
@@ -117,7 +115,7 @@ class OldModel(CaptionModel):
             beam_seq_logprobs = torch.FloatTensor(self.seq_length, beam_size).zero_()
             beam_logprobs_sum = torch.zeros(beam_size) # running sum of logprobs for each beam
             done_beams = []
-            for t in range(1):
+            for t in range(17):
                 if t == 0: # input <bos>
                     it = fc_feats.data.new(beam_size).long().zero_()
                     xt = self.embed(Variable(it, requires_grad=False))
