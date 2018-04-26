@@ -84,6 +84,7 @@ class OldModel(CaptionModel):
             output = F.log_softmax(self.logit(self.dropout(output)))
             outputs.append(output)
             weights.append(weight)
+            print(len(weights))
         return torch.cat([_.unsqueeze(1) for _ in outputs], 1), weights
 
     def get_logprobs_state(self, it, tmp_fc_feats, tmp_att_feats, state):
