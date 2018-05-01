@@ -64,7 +64,7 @@ def language_eval(dataset, preds, model_id, split):
 
     return out
 
-def eval_split(model, crit, loader, eval_kwargs={}):
+def eval_split(model, crit, loader, eval_kwargs={}, filePath):
     verbose = eval_kwargs.get('verbose', True)
     num_images = eval_kwargs.get('num_images', eval_kwargs.get('val_images_use', -1))
     split = eval_kwargs.get('split', 'val')
@@ -119,7 +119,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
 
                 #plot attension image
                 words = entry['caption'].split(" ")
-                oriimg = Image.open('vis/imgs/img' + str(len(predictions)) + '.jpg')
+                oriimg = Image.open(filePath + '/imgs/img' + str(len(predictions)) + '.jpg')
                 plt.clf()
                 plt.subplot(4, 5, 1)
                 plt.imshow(oriimg)
@@ -137,7 +137,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
                     alps = resize(alpha, (oriimg.size[1], oriimg.size[0]))
                     plt.imshow(alps, alpha = 0.7)
                     plt.axis('off')
-                plt.savefig('vis/attention/' + str(len(predictions)) + '.jpg',dpi=200)
+                plt.savefig(filePath + '/attention/' + str(len(predictions)) + '.jpg',dpi=200)
                 plt.clf()
 
             if verbose:

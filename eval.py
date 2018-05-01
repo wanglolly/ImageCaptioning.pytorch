@@ -22,7 +22,7 @@ import misc.utils as utils
 import torch
 
 
-
+filePath = 'Result_TopDown'
 # Input arguments and options
 parser = argparse.ArgumentParser()
 # Input paths
@@ -124,7 +124,7 @@ loader.ix_to_word = infos['vocab']
 
 # Set sample options
 loss, split_predictions, lang_stats = eval_utils.eval_split(model, crit, loader, 
-    vars(opt))
+    vars(opt), filePath)
 
 print('loss: ', loss)
 if lang_stats:
@@ -132,4 +132,4 @@ if lang_stats:
 
 if opt.dump_json == 1:
     # dump the json
-    json.dump(split_predictions, open('vis/vis.json', 'w'))
+    json.dump(split_predictions, open(filePath + '/vis.json', 'w'))

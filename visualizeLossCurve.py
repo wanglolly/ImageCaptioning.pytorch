@@ -18,7 +18,7 @@ def get_train_loss(dta):
     return loss
 
 trainloss = get_train_loss(read_table(open(filename, 'r')))
-
+print('Minimum value: ' + str(min(trainloss)))
 #Plot the training loss
 plt.subplots()
 plt.plot(range(56644), trainloss, label= 'Training Loss')
