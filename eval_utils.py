@@ -113,7 +113,7 @@ def eval_split(model, crit, loader, filePath, eval_kwargs={}):
             predictions.append(entry)
             if eval_kwargs.get('dump_images', 0) == 1:
                 # dump the raw image to vis/ folder
-                cmd = 'cp "' + os.path.join(eval_kwargs['image_root'], data['infos'][k]['file_path']) + '"' + filePath + '/imgs/img' + str(len(predictions)) + '.jpg' # bit gross
+                cmd = 'cp "' + os.path.join(eval_kwargs['image_root'], data['infos'][k]['file_path']) + '" ' +  filePath + '/imgs/img' + str(len(predictions)) + '.jpg' # bit gross
                 print(cmd)
                 os.system(cmd)
 
