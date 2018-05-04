@@ -88,10 +88,10 @@ def eval_split(model, crit, loader, filePath, eval_kwargs={}):
 
         if data.get('labels', None) is not None:
             # forward the model to get loss
-            print(data['att_feats'].count)
             tmp = [data['fc_feats'], data['att_feats'], data['labels'], data['masks']]
             tmp = [Variable(torch.from_numpy(_), volatile=True).cuda() for _ in tmp]
             fc_feats, att_feats, labels, masks = tmp
+            print(att_feats.count)
             value, alphas = model(fc_feats, att_feats, labels)
             loss = crit(value, labels[:,1:], masks[:,1:]).data[0]
             loss_sum = loss_sum + loss
