@@ -131,9 +131,9 @@ def eval_split(model, crit, loader, filePath, eval_kwargs={}):
                     plt.subplot(4, 5, t + 2)
                     plt.text(0, 1, '%s'%(words[t]), color='black', backgroundcolor='white', fontsize = 8)
                     plt.imshow(oriimg)
-                    alpha = alphas[t+1]
+                    alpha = alphas[t]
                     #index = Variable(torch.cuda.LongTensor([k * loader.seq_per_img]))
-                    index = Variable(torch.cuda.LongTensor([0]))
+                    index = Variable(torch.cuda.LongTensor([1]))
                     alpha = torch.index_select(alpha, 0, index)
                     alpha = alpha.view(-1,14).cpu().data.numpy()
                     alps = resize(alpha, (oriimg.size[1], oriimg.size[0]))
