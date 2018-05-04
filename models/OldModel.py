@@ -104,7 +104,7 @@ class OldModel(CaptionModel):
         # lets process every image independently for now, for simplicity
 
         self.done_beams = [[] for _ in range(batch_size)]
-        weights = []
+        self.weights = []
         for k in range(batch_size):
             tmp_fc_feats = fc_feats[k:k+1].expand(beam_size, self.fc_feat_size)
             tmp_att_feats = att_feats[k:k+1].expand(*((beam_size,)+att_feats.size()[1:])).contiguous()
@@ -118,7 +118,6 @@ class OldModel(CaptionModel):
                 if t == 0: # input <bos>
                     it = fc_feats.data.new(beam_size).long().zero_()
                     xt = self.embed(Variable(it, requires_grad=False))
-
                 output, state, _ = self.core(xt, tmp_fc_feats, tmp_att_feats, state)
                 logprobs = F.log_softmax(self.logit(self.dropout(output))
 
