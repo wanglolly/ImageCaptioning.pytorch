@@ -104,9 +104,6 @@ def eval_split(model, crit, loader, filePath, eval_kwargs={}):
         fc_feats, att_feats = tmp
         # forward the model to also get generated samples for each image
         seq, state, weights = model.sample(fc_feats, att_feats, eval_kwargs)
-        print(len(weights))
-        print(len(weights[0]))
-        print(weights[0][0].size())
         #set_trace()
         sents = utils.decode_sequence(loader.get_vocab(), seq) 
         for k, sent in enumerate(sents):
@@ -127,6 +124,7 @@ def eval_split(model, crit, loader, filePath, eval_kwargs={}):
                 plt.subplot(4, 5, 1)
                 plt.imshow(oriimg)
                 plt.axis('off')
+                alphas = weights[k]
                 for t in range(len(words)):
                     if t > 18 :
                         break
@@ -134,7 +132,8 @@ def eval_split(model, crit, loader, filePath, eval_kwargs={}):
                     plt.text(0, 1, '%s'%(words[t]), color='black', backgroundcolor='white', fontsize = 8)
                     plt.imshow(oriimg)
                     alpha = alphas[t]
-                    index = Variable(torch.cuda.LongTensor([k * loader.seq_per_img]))
+                    #index = Variable(torch.cuda.LongTensor([k * loader.seq_per_img]))
+                    index = Variable(torch.cuda.LongTensor([0]))
                     alpha = torch.index_select(alpha, 0, index)
                     alpha = alpha.view(-1,14).cpu().data.numpy()
                     alps = resize(alpha, (oriimg.size[1], oriimg.size[0]))
