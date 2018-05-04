@@ -89,10 +89,10 @@ class OldModel(CaptionModel):
         # 'it' is Variable contraining a word index
         xt = self.embed(it)
 
-        output, state, _ = self.core(xt, tmp_fc_feats, tmp_att_feats, state)
+        output, state, weight = self.core(xt, tmp_fc_feats, tmp_att_feats, state)
         logprobs = F.log_softmax(self.logit(self.dropout(output)))
 
-        return logprobs, state
+        return logprobs, state, weight
 
     def sample_beam(self, fc_feats, att_feats, opt={}):
         beam_size = opt.get('beam_size', 10)
@@ -119,11 +119,11 @@ class OldModel(CaptionModel):
                     it = fc_feats.data.new(beam_size).long().zero_()
                     xt = self.embed(Variable(it, requires_grad=False))
 
-                output, state, weight = self.core(xt, tmp_fc_feats, tmp_att_feats, state)
-                logprobs = F.log_softmax(self.logit(self.dropout(output)))
-                weights.append(weight)
+                output, state, _ = self.core(xt, tmp_fc_feats, tmp_att_feats, state)
+                logprobs = F.log_softmax(self.logit(self.dropout(output))
 
-            self.done_beams[k] = self.beam_search(state, logprobs, tmp_fc_feats, tmp_att_feats, opt=opt)
+            self.done_beams[k], weight = self.beam_search(state, logprobs, tmp_fc_feats, tmp_att_feats, opt=opt)
+            weights.append(weight)
             seq[:, k] = self.done_beams[k][0]['seq'] # the first beam has highest cumulative score
             seqLogprobs[:, k] = self.done_beams[k][0]['logps']
         # return the samples and their log likelihoods

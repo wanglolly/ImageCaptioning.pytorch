@@ -91,7 +91,6 @@ def eval_split(model, crit, loader, filePath, eval_kwargs={}):
             tmp = [data['fc_feats'], data['att_feats'], data['labels'], data['masks']]
             tmp = [Variable(torch.from_numpy(_), volatile=True).cuda() for _ in tmp]
             fc_feats, att_feats, labels, masks = tmp
-            print(att_feats.size)
             value, alphas = model(fc_feats, att_feats, labels)
             loss = crit(value, labels[:,1:], masks[:,1:]).data[0]
             loss_sum = loss_sum + loss
@@ -105,6 +104,9 @@ def eval_split(model, crit, loader, filePath, eval_kwargs={}):
         fc_feats, att_feats = tmp
         # forward the model to also get generated samples for each image
         seq, state, weights = model.sample(fc_feats, att_feats, eval_kwargs)
+        print(len(weights))
+        print(len(weights[0]))
+        print(weights[0][0].size())
         #set_trace()
         sents = utils.decode_sequence(loader.get_vocab(), seq) 
         for k, sent in enumerate(sents):

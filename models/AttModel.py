@@ -141,11 +141,11 @@ class AttModel(CaptionModel):
                     it = fc_feats.data.new(beam_size).long().zero_()
                     xt = self.embed(Variable(it, requires_grad=False))
 
-                output, state, weight = self.core(xt, tmp_fc_feats, tmp_att_feats, tmp_p_att_feats, state)
+                output, state, _ = self.core(xt, tmp_fc_feats, tmp_att_feats, tmp_p_att_feats, state)
                 logprobs = F.log_softmax(self.logit(output))
-                weights.append(weight)
 
-            self.done_beams[k] = self.beam_search(state, logprobs, tmp_fc_feats, tmp_att_feats, tmp_p_att_feats, opt=opt)
+            self.done_beams[k], weight = self.beam_search(state, logprobs, tmp_fc_feats, tmp_att_feats, tmp_p_att_feats, opt=opt)
+            weights.append(weight)
             seq[:, k] = self.done_beams[k][0]['seq'] # the first beam has highest cumulative score
             seqLogprobs[:, k] = self.done_beams[k][0]['logps']
         # return the samples and their log likelihoods
