@@ -139,7 +139,7 @@ def eval_split(model, crit, loader, filePath, eval_kwargs={}):
                     alps = resize(alpha, (oriimg.size[1], oriimg.size[0]))
                     plt.imshow(alps, alpha = 0.7)
                     plt.axis('off')
-                plt.savefig(filePath + '/attention/' + str(len(predictions)) + '.jpg',dpi=200)
+                plt.savefig(filePath + '/attention/' + str(len(predictions)) + '.jpg',dpi=350)
                 plt.clf()
 
             if verbose:

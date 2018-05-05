@@ -2,7 +2,7 @@ import csv
 import matplotlib.pyplot as plt
 import numpy as np
 
-captionModel = 'show_attend_tell'
+captionModel = 'topdown'
 filename = 'LossFile/' + captionModel + '.csv'
 
 def read_table(file):
@@ -21,7 +21,7 @@ trainloss = get_train_loss(read_table(open(filename, 'r')))
 print('Minimum value: ' + str(min(trainloss)))
 #Plot the training loss
 plt.subplots()
-plt.plot(range(56644), trainloss, label= 'Training Loss')
+plt.plot(range(56644), trainloss, label= 'Bottom-Up and Top-Down Attention \n Training Loss')
 plt.legend()
 plt.ylim([0., 10.0])
 plt.xlabel("Iteration")
