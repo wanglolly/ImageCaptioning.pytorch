@@ -22,7 +22,7 @@ import misc.utils as utils
 import torch
 
 
-filePath = 'Result_ShowAttendTell'
+filePath = 'Result_TopDown'
 # Input arguments and options
 parser = argparse.ArgumentParser()
 # Input paths
